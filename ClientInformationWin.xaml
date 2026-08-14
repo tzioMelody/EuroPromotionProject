@@ -7,7 +7,7 @@
         mc:Ignorable="d" Title="Καταχώρηση στοιχεία πελατών" 
         Width="auto"
         Height="auto" 
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen" Closed="Window_Closed">
     <Border BorderBrush="#E2E8F0" BorderThickness="1">
         <Border.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -168,26 +168,28 @@
                             </StackPanel.Resources>
 
                             <TextBlock Margin="0,0,0,20" HorizontalAlignment="Center" FontSize="18" FontWeight="Bold" Foreground="#1E293B" Text="Στοιχεία Επικοινωνίας" />
+                            <TextBlock Text="1. Promoter*" />
+                            <Grid Margin="5">
+                                
+                                <ComboBox x:Name="ComboPromoter" Height="40" Margin="0,0,0,15" SelectionChanged="PromoterCombo_SelectionChanged" Style="{StaticResource ComboBoxStyle}">
+                                </ComboBox>
+                                <TextBlock Name="ComboPromoterPlaceHolder" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,10" Foreground="Black" FontSize="16" IsHitTestVisible="False">--ΕΠΙΛΕΞΤΕ PROMOTER--</TextBlock>
 
-                            <TextBlock Text="1. Promoter*" />         
-                            <ComboBox x:Name="ComboPromoter" Height="40" Margin="0,0,0,15" SelectedIndex="0" SelectionChanged="PromoterCombo_SelectionChanged" Style="{StaticResource ComboBoxStyle}">
-                                <ComboBoxItem Content="--ΕΠΙΛΕΞΤΕ PROMOTER--" IsEnabled="False" Visibility="Collapsed" />
-                            </ComboBox>
-
+                            </Grid>
                             <TextBlock Text="2. Επωνυμία Φαρμακείου *" />
-                            <TextBox x:Name="TxtPharmacy" CharacterCasing="Upper" />
+                            <TextBox x:Name="TxtPharmacy" CharacterCasing="Upper" PreviewKeyDown="TxtPharmacy_PreviewKeyDown"/>
 
                             <TextBlock Text="3. Πόλη" />
-                            <TextBox x:Name="TxtCity" CharacterCasing="Upper" />
+                            <TextBox x:Name="TxtCity" CharacterCasing="Upper" PreviewKeyDown="TxtCity_PreviewKeyDown"/>
 
                             <TextBlock Text="4. Τηλέφωνο *" />
-                            <TextBox x:Name="TxtPhone" MaxLength="10" PreviewTextInput="TxtPhone_PreviewTextInput" />
+                            <TextBox x:Name="TxtPhone" MaxLength="10" PreviewTextInput="TxtPhone_PreviewTextInput" PreviewKeyDown="TxtPhone_PreviewKeyDown"/>
 
                             <TextBlock Text="5. e-mail" />
-                            <TextBox x:Name="TxtEmail" CharacterCasing="Upper" />
+                            <TextBox x:Name="TxtEmail" />
 
                             <TextBlock Text="6. Πρόγραμμα" />
-                            <ComboBox x:Name="ComboProgram" Height="40" Margin="0,0,0,15" SelectedIndex="0">
+                            <ComboBox x:Name="ComboProgram" Height="40" Margin="0,0,0,15" SelectedIndex="0" SelectionChanged="ProgramCombo_SelectionChanged">
                                 <ComboBoxItem Content="-- ΕΠΙΛΕΞΤΕ ΠΡΟΓΡΑΜΜΑ --" IsEnabled="False" Visibility="Collapsed" />
                                 <ComboBoxItem Content="EUROMEDICATWO" />
                                 <ComboBoxItem Content="D" />
@@ -198,49 +200,51 @@
                                 <ComboBoxItem x:Name="ItemOther" Content="ΑΛΛΟ" />
                             </ComboBox>
 
-                            <!--<TextBlock Text="Προσδιορίστε το Πρόγραμμα:">
+                            <TextBlock Text="Προσδιορίστε το Πρόγραμμα:">
                                 <TextBlock.Style>
                                     <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
                                         <Setter Property="Visibility" Value="Collapsed" />
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding ElementName=ComboProgram, Path=SelectedItem}" Value="{x:Reference ItemOther}">
+                                            <DataTrigger Binding="{Binding ElementName=ComboProgram, Path=SelectedItem}">
                                                 <Setter Property="Visibility" Value="Visible" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </TextBlock.Style>
-                            </TextBlock>-->
+                            </TextBlock>
 
-                            <!--<TextBox x:Name="TxtOtherProgram" CharacterCasing="Upper">
+                            <TextBox x:Name="TxtOtherProgram" CharacterCasing="Upper">
                                 <TextBox.Style>
                                     <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
                                         <Setter Property="Visibility" Value="Collapsed" />
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding ElementName=ComboProgram, Path=SelectedItem}" Value="{x:Reference ItemOther}">
+                                            <DataTrigger Binding="{Binding ElementName=ComboProgram, Path=SelectedItem}" >
                                                 <Setter Property="Visibility" Value="Visible" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </TextBox.Style>
-                            </TextBox>-->
+                            </TextBox>
 
                             <TextBlock Text="7. Πελάτης" />
-                            <ComboBox x:Name="ComboClient" Height="40" Margin="0,0,0,15" SelectedIndex="0">
+                            <ComboBox x:Name="ComboClient" Height="40" Margin="0,0,0,15" SelectedIndex="0" SelectionChanged="ClientCombo_SelectionChanged">
                                 <ComboBoxItem Content="-- ΕΠΙΛΕΞΤΕ ΝΑΙ/ΟΧΙ --" />
                                 <ComboBoxItem Content="ΝΑΙ" />
                                 <ComboBoxItem Content="ΟΧΙ" />
                             </ComboBox>
 
                             <TextBlock Text="8. PRESENTATION" />
-                            <ComboBox x:Name="ComboPresentation" Height="40" Margin="0,0,0,15" SelectedIndex="0" SelectionChanged="PresentationCombo_SelectionChanged" Style="{StaticResource ComboBoxStyle}">
-                                    <ComboBoxItem Content="--ΕΠΙΛΕΞΤΕ PRESENTATOR--" IsEnabled="False" Visibility="Collapsed" />
-                            </ComboBox>
-
+                            <Grid Margin="5">
+                                <ComboBox x:Name="ComboPresentation" Height="40" Margin="0,0,0,15" SelectionChanged="PresentationCombo_SelectionChanged" Style="{StaticResource ComboBoxStyle}">
+                                </ComboBox>
+                                <TextBlock Name="ComboPresenterPlaceHolder" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,10" Foreground="Black" FontSize="16" IsHitTestVisible="False">--ΕΠΙΛΕΞΤΕ PRESENTER--</TextBlock>
+                            </Grid>
                             <TextBlock Text="9. SALES" />
-                            <ComboBox x:Name="ComboSales" Height="40" Margin="0,0,0,15" SelectedIndex="0" SelectionChanged="SalesPersonCombo_SelectionChanged" Style="{StaticResource ComboBoxStyle}">
-                                <ComboBoxItem Content="--ΕΠΙΛΕΞΤΕ SALES--" IsEnabled="False" Visibility="Collapsed" />
-                            </ComboBox>
-                            
+                            <Grid Margin="5">
+                                <ComboBox x:Name="ComboSales" Height="40" Margin="0,0,0,15" SelectionChanged="SalesPersonCombo_SelectionChanged" Style="{StaticResource ComboBoxStyle}">
+                                </ComboBox>
+                                <TextBlock Name="ComboSalesPlaceHolder" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,10" Foreground="Black" FontSize="16" IsHitTestVisible="False">--ΕΠΙΛΕΞΤΕ SALES--</TextBlock>
+                            </Grid>
                             <TextBlock Text="10. Παρατηρήσεις" />
                             <WrapPanel Margin="0,0,0,5">
                                 <Button Margin="0,0,5,5" Padding="8,3" Background="#F1F5F9" Click="QuickNote_Click" Content="+ Ήρθε ο/η βοηθός" />
@@ -264,7 +268,7 @@
                                 <Border Height="250" Background="White" BorderBrush="#CBD5E1" BorderThickness="2" CornerRadius="12">
                                     <Grid>
                                         <InkCanvas x:Name="SignCanvas" Margin="5" Background="Transparent" />
-                                        <Line Margin="10,0,10,30" VerticalAlignment="Bottom" Stroke="#E2E8F0" StrokeThickness="1" X1="20" X2="500" Y1="230" Y2="230" />
+                                        <Line Margin="10,0,10,30" VerticalAlignment="Bottom" HorizontalAlignment="Center" Stroke="#E2E8F0" StrokeThickness="1" X1="0" X2="700" Y1="230" Y2="230" />
                                     </Grid>
                                 </Border>
                                 
