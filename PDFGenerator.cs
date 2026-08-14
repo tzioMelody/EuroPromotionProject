@@ -10,7 +10,7 @@ namespace EuroPromotionProject
 {
     class PDFGenerator
     {
-        public void CreatePdfWithSignature(string dest, string pharmacyName, string promoter, string city, string phone, string email, string program, string client, string presentation, string sales, string notes, bool hasConsent, InkCanvas canvas)
+        public void CreatePdfWithSignature(string dest, string pharmacyName, string promoter, string city, string phone, string email, string originalprogram, string finalprogram, string client, string presentation, string sales, string notes, bool hasConsent, InkCanvas canvas)
         {
             try
             {
@@ -131,7 +131,8 @@ namespace EuroPromotionProject
                             <tr><th>ΤΗΛΕΦΩΝΟ</th><td>{phone}</td></tr>
                             <tr><th>E-MAIL</th><td>{email}</td></tr>
                             <tr><th>ΠΕΛΑΤΗΣ</th><td>{client}</td></tr>
-                            <tr><th>ΠΡΟΓΡΑΜΜΑ</th><td>{program}</td></tr>
+                            <tr><th>ΑΡΧΙΚΟ ΠΡΟΓΡΑΜΜΑ</th><td>{originalprogram}</td></tr>
+                            <tr><th>ΠΡΟΓΡΑΜΜΑ</th><td>{finalprogram}</td></tr>
                             <tr><th>PRESENTATION</th><td>{presentation}</td></tr>
                             <tr><th>SALES</th><td>{sales}</td></tr>
                             <tr><th>ΠΑΡΑΤΗΡΗΣΕΙΣ</th><td>{notes}</td></tr>

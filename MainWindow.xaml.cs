@@ -101,5 +101,30 @@ namespace EuroPromotionProject
                 MessageBox.Show($"Σφάλμα φόρτωσης: {ex.Message}");
             }
         }
+
+        private void EditPdf_Click(object sender, RoutedEventArgs e) // ή EditPdf_Click
+        {
+            var button = sender as Button;
+            if (button?.DataContext is StatementFile selected)
+            {
+                if (System.IO.File.Exists(selected.FullPath))
+                {
+                    // Ανοίγουμε το παράθυρο περνώντας του το αρχείο προς επεξεργασία
+                    ClientInformationWin clientInfWin = new ClientInformationWin(selected);
+                    clientInfWin.Show();
+                }
+                else
+                {
+                    MessageBox.Show("Το αρχείο δεν βρέθηκε.", "Σφάλμα", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+        }
+
+        private void showEditedPdf_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+      
     }
 }

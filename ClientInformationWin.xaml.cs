@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,23 +25,37 @@ namespace EuroPromotionProject
     public partial class ClientInformationWin : Window
     {
         Window mainWindow;
+        private StatementFile _fileToEdit;
         public string Pharmacy => TxtPharmacy.Text;
         public string City => TxtCity.Text;
         public string Phone => TxtPhone.Text;
         public string Email => TxtEmail.Text;
-        public string Program => ComboProgram.SelectionBoxItem?.ToString();
-        public string Client => ComboClient.SelectionBoxItem?.ToString();
         public string Notes => TxtNotes.Text;
         public bool IsConsentChecked => ChkConsent.IsChecked == true;
-        public List<StatementFile> allFiles = new List<StatementFile>();
 
+        public List<StatementFile> allFiles = new List<StatementFile>();
+       
+        public class StatementData
+        {
+            public string Pharmacy { get; set; }
+            public string City { get; set; }
+            public string Phone { get; set; }
+            public string Email { get; set; }
+            public string Promoter { get; set; }
+            public string Presenter { get; set; }
+            public string SalesPerson { get; set; }
+            public string Program { get; set; }
+            public string finalProgram { get; set; }    
+            public string Client { get; set; }
+            public string Notes { get; set; }
+            public bool IsConsentChecked { get; set; }
+        }
         public class StatementFile
         {
             public string FileName { get; set; }
             public string FullPath { get; set; }
             public string DateCreated { get; set; }
         }
-
         public void InitWindow(Window mw)
         {
             mainWindow = mw;
@@ -64,8 +79,36 @@ namespace EuroPromotionProject
             ComboSales.ItemsSource = null;
             ComboSales.ItemsSource = itemsListSales;
 
-        }
+            List<string> programList = new List<string>
+            {
+                "-- ΕΠΙΛΕΞΤΕ ΠΡΟΓΡΑΜΜΑ --",
+                "EUROMEDICATWO",
+                "D",
+                "F/P",
+                "Λ",
+                "O",
+                "S",
+                "ΑΛΛΟ"
+            };
 
+            ComboProgram.ItemsSource = programList;
+            ComboProgram.SelectedIndex = 0;
+
+
+            List<string> clientList = new List<string>
+            {
+                "--ΕΠΙΛΕΞΤΕ ΝΑΙ / ΟΧΙ--",
+                "ΝΑΙ", "ΟΧΙ"
+            };
+
+            ComboClient.ItemsSource = clientList;
+            ComboClient.SelectedIndex = 0;
+        }
+        public ClientInformationWin(StatementFile fileToEdit) : this()
+        {
+            _fileToEdit = fileToEdit;
+            LoadDataForEdit(); 
+        }
         private void PromoterCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ComboPromoter.SelectedIndex > -1)
@@ -92,6 +135,11 @@ namespace EuroPromotionProject
         }
         private void ProgramCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if(ComboProgram.SelectedItem.ToString() == "ΑΛΛΟ")
+            {
+                TxtOtherProgramBlock.Visibility = Visibility.Visible;
+                TxtOtherProgram.Visibility = Visibility.Visible;
+            }
 
         }
 
@@ -178,6 +226,70 @@ namespace EuroPromotionProject
                 return dt;
             }
         }
+
+        private void LoadDataForEdit()
+        {
+            if (_fileToEdit == null) return;
+
+            signPanel.Visibility = Visibility.Collapsed; // Hide the signature grid when editing
+
+            string jsonPath = System.IO.Path.ChangeExtension(_fileToEdit.FullPath, ".json");
+
+            if (File.Exists(jsonPath))
+            {
+                try
+                {
+                    string jsonString = File.ReadAllText(jsonPath);
+                    var data = JsonSerializer.Deserialize<StatementData>(jsonString);
+
+                    if (data != null)
+                    {
+                        TxtPharmacy.Text = data.Pharmacy;
+                        TxtCity.Text = data.City;
+                        TxtPhone.Text = data.Phone;
+                        TxtEmail.Text = data.Email;
+                        TxtNotes.Text = data.Notes;
+                        ChkConsent.IsChecked = data.IsConsentChecked;
+
+                        ComboPromoter.SelectedItem = data.Promoter;
+                        ComboPresentation.SelectedItem = data.Presenter;
+                        ComboSales.SelectedItem = data.SalesPerson;
+                        ComboProgram.SelectedItem = data.Program;
+                        ComboClient.SelectedItem = data.Client;
+
+                        if (!string.IsNullOrEmpty(data.Promoter) && ComboPromoterPlaceHolder != null)
+                            ComboPromoterPlaceHolder.Visibility = Visibility.Collapsed;
+
+                        if (!string.IsNullOrEmpty(data.Presenter) && ComboPresenterPlaceHolder != null)
+                            ComboPresenterPlaceHolder.Visibility = Visibility.Collapsed;
+
+                        if (!string.IsNullOrEmpty(data.SalesPerson) && ComboSalesPlaceHolder != null)
+                            ComboSalesPlaceHolder.Visibility = Visibility.Collapsed;
+
+                        if (!string.IsNullOrEmpty(data.Program) && ComboProgram.SelectedItem.ToString() == "ΑΛΛΟ")
+                        {
+                            TxtOtherProgramBlock.Visibility = Visibility.Visible;
+                            TxtOtherProgram.Text = data.finalProgram;
+                        }
+                            
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Αποτυχία φόρτωσης δεδομένων επεξεργασίας: " + ex.Message);
+                }
+            }
+            else
+            {
+                string fileNameWithoutExt = System.IO.Path.GetFileNameWithoutExtension(_fileToEdit.FileName);
+                var parts = fileNameWithoutExt.Split('_');
+                if (parts.Length > 0)
+                {
+                    TxtPharmacy.Text = parts[0];
+                }
+            }
+        }
         private static bool IsTextAllowed(string text)
         {
             System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex("[^0-9]+");
@@ -225,7 +337,7 @@ namespace EuroPromotionProject
                 MessageBox.Show("Ο Promoter, το Φαρμακείο και το Τηλέφωνο είναι υποχρεωτικά πεδία!");
                 return;
             }
-            if (SignCanvas.Strokes.Count == 0)
+            if (SignCanvas.Strokes.Count == 0 && _fileToEdit == null)
             {
                 MessageBox.Show("Παρακαλώ βάλτε την υπογραφή σας.");
                 return;
@@ -248,14 +360,54 @@ namespace EuroPromotionProject
                     Directory.CreateDirectory(statementPath);
                 }
 
-                string finalProgram = (ComboProgram.SelectedItem == ItemOther)
-                            ? TxtOtherProgram.Text.Trim()
-                            : Program;
+                string originalProgram = ComboProgram.SelectedItem?.ToString();
+                
+                string finalProgram = (originalProgram == "ΑΛΛΟ") ? TxtOtherProgram.Text.Trim() : originalProgram;
 
-                if (string.IsNullOrEmpty(finalProgram)) finalProgram = "Μη καθορισμένο";
-                string StatementFileName = $"{TxtPharmacy.Text}_{DateTime.Now:yyyyMMdd_HHmm}.pdf";
+                if (string.IsNullOrEmpty(finalProgram) || finalProgram == "--ΕΠΙΛΕΞΤΕ ΠΡΟΓΡΑΜΜΑ--")
+                {
+                    finalProgram = "Μη καθορισμένο";
+                }
+
+                string cleanPharmacyName = string.Concat(TxtPharmacy.Text.Split(System.IO.Path.GetInvalidFileNameChars()));
+
+                string StatementFileName = "";
+
+                
+                if (_fileToEdit != null)
+                {
+
+                    if (!_fileToEdit.FileName.Contains("_Edited"))
+                    {
+                        string originalFileNameWithoutExt = System.IO.Path.GetFileNameWithoutExtension(_fileToEdit.FileName);
+
+                        StatementFileName = $"{originalFileNameWithoutExt}_Edited.pdf";
+                    }
+                    else
+                    {
+                        if (File.Exists(_fileToEdit.FullPath))
+                        {
+                            File.Delete(_fileToEdit.FullPath);
+                        }
+
+                        string oldJsonPath = System.IO.Path.ChangeExtension(_fileToEdit.FullPath, ".json");
+                        if (File.Exists(oldJsonPath))
+                        {
+                            File.Delete(oldJsonPath);
+                        }
+
+                        // Κρατάμε το ίδιο όνομα αρχείου για να μην αλλάξει
+                        StatementFileName = _fileToEdit.FileName;
+                    }
+
+                }
+                else
+                {
+                    // Νέα καταχώρηση
+                    StatementFileName = $"{cleanPharmacyName}_{DateTime.Now:yyyyMMdd_HHmm}.pdf";
+                }
+
                 string fullDestPath = System.IO.Path.Combine(statementPath, StatementFileName);
-
                 PDFGenerator generator = new PDFGenerator();
                 generator.CreatePdfWithSignature(
                     fullDestPath,
@@ -263,9 +415,10 @@ namespace EuroPromotionProject
                     ComboPromoter.Text,      // Χρησιμοποιεί το SelectionBoxItem αυτόματα
                     City,          // Αντί για infoWin.TxtCity.Text
                     Phone,         // Αντί για infoWin.TxtPhone.Text
-                    Email,         // Αντί για infoWin.TxtEmail.Text
+                    Email,  
+                    originalProgram, // Αντί για infoWin.TxtEmail.Text
                     finalProgram,       // Αντί για infoWin.TxtProgram.Text
-                    Client,        // Χρησιμοποιεί το SelectionBoxItem (ΝΑΙ/ΟΧΙ)
+                    ComboClient.Text,        // Χρησιμοποιεί το SelectionBoxItem (ΝΑΙ/ΟΧΙ)
                     ComboPresentation.Text,  // Χρησιμοποιεί το SelectionBoxItem (ΝΑΙ/ΟΧΙ)
                     ComboSales.Text,         // Χρησιμοποιεί το SelectionBoxItem (ΝΑΙ/ΟΧΙ)
                     Notes,         // Αντί για infoWin.TxtNotes.Text
@@ -273,33 +426,44 @@ namespace EuroPromotionProject
                     SignCanvas
                 );
 
+                var statementData = new StatementData
+                {
+                    Pharmacy = Pharmacy,
+                    City = City,
+                    Phone = Phone,
+                    Email = Email,
+                    Promoter = ComboPromoter.Text,
+                    Presenter = ComboPresentation.Text,
+                    SalesPerson = ComboSales.Text,
+                    Program = ComboProgram.Text,
+                    finalProgram = TxtOtherProgram.Text,
+                    Client = ComboClient.Text,
+                    Notes = Notes,
+                    IsConsentChecked = IsConsentChecked
+                };
+
+                string jsonPath = System.IO.Path.ChangeExtension(fullDestPath, ".json");
+                string jsonString = JsonSerializer.Serialize(statementData, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(jsonPath, jsonString);
+
                 try
                 {
-                    // Εντοπισμός του τοπικού φακέλου OneDrive του χρήστη
-                    string oneDrivePath = Environment.GetEnvironmentVariable("OneDrive");
-
-                    if (string.IsNullOrEmpty(oneDrivePath))
-                    {
-                        // Εναλλακτική αν πρόκειται για OneDrive for Business
-                        oneDrivePath = Environment.GetEnvironmentVariable("OneDriveCommercial");
-                    }
+                    string oneDrivePath = Environment.GetEnvironmentVariable("OneDrive") ?? Environment.GetEnvironmentVariable("OneDriveCommercial");
 
                     if (!string.IsNullOrEmpty(oneDrivePath))
                     {
-                        // Ορίζουμε τον υποφάκελο στον οποίο θέλουμε να σωθεί (π.χ. OneDrive\Reports)
                         string targetFolder = System.IO.Path.Combine(oneDrivePath, "EuroStatementsPdf");
 
-                        // Δημιουργία του φακέλου αν δεν υπάρχει
                         if (!Directory.Exists(targetFolder))
                         {
                             Directory.CreateDirectory(targetFolder);
                         }
 
                         string fileName = System.IO.Path.GetFileName(fullDestPath);
-                        string destinationPathInOneDrive = System.IO.Path.Combine(targetFolder, fileName);
 
-                        // Αντιγραφή του αρχείου στον φάκελο του OneDrive
-                        File.Copy(fullDestPath, destinationPathInOneDrive, overwrite: true);
+                        // Αντιγραφή PDF & JSON στο OneDrive
+                        File.Copy(fullDestPath, System.IO.Path.Combine(targetFolder, fileName), overwrite: true);
+                        File.Copy(jsonPath, System.IO.Path.Combine(targetFolder, System.IO.Path.GetFileName(jsonPath)), overwrite: true);
 
                         MessageBox.Show("Η αναφορά σώθηκε επιτυχώς στον φάκελο OneDrive και συγχρονίζεται!",
                                         "OneDrive Sync", MessageBoxButton.OK, MessageBoxImage.Information);

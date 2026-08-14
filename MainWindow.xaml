@@ -101,7 +101,7 @@
                                 </DataGrid.ColumnHeaderStyle>
 
                                 <DataGrid.Columns>
-                                    <DataGridTemplateColumn Width="*" Header="Όνομα Αρχείου">
+                                    <DataGridTemplateColumn Width="auto" Header="Όνομα Αρχείου">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <StackPanel Margin="10,0" VerticalAlignment="Center" Orientation="Horizontal">
@@ -114,14 +114,30 @@
 
                                     <DataGridTextColumn Width="250" Binding="{Binding DateCreated}" Header="Ημερομηνία" />
 
-                                    <DataGridTemplateColumn Width="150" Header="Ενέργειες">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <Button Height="35" Margin="5" Click="OpenPdf_Click" Content="Άνοιγμα" Cursor="Hand" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-                                </DataGrid.Columns>
+                                <DataGridTemplateColumn Width="150" Header="Προβολή">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Height="35" Margin="5" Click="OpenPdf_Click" Content="Άνοιγμα pdf" Cursor="Hand" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Width="180" Header="Επεξεργασία">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Height="35" Margin="5" Click="EditPdf_Click" Content="Επεξεργασία στοιχείων" Cursor="Hand" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Width="180" Header="Προβολή επεξεργασμένων δελτίων" Visibility="Collapsed">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Height="35" Margin="5" Click="showEditedPdf_Click" Content="Προβολή επεξεργασμένου δελτίου" Cursor="Hand" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
                             </DataGrid>
                             <!--<Grid x:Name="OverlayGrid" Background="White">
                                 <Image Margin="50" Source="pack://application:,,,/Assets/Eurologo.png" Stretch="Uniform" />

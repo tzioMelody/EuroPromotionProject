@@ -189,49 +189,28 @@
                             <TextBox x:Name="TxtEmail" />
 
                             <TextBlock Text="6. Πρόγραμμα" />
-                            <ComboBox x:Name="ComboProgram" Height="40" Margin="0,0,0,15" SelectedIndex="0" SelectionChanged="ProgramCombo_SelectionChanged">
-                                <ComboBoxItem Content="-- ΕΠΙΛΕΞΤΕ ΠΡΟΓΡΑΜΜΑ --" IsEnabled="False" Visibility="Collapsed" />
-                                <ComboBoxItem Content="EUROMEDICATWO" />
-                                <ComboBoxItem Content="D" />
-                                <ComboBoxItem Content="F/P" />
-                                <ComboBoxItem Content="Λ" />
-                                <ComboBoxItem Content="O" />
-                                <ComboBoxItem Content="S" />
-                                <ComboBoxItem x:Name="ItemOther" Content="ΑΛΛΟ" />
-                            </ComboBox>
+                            <ComboBox x:Name="ComboProgram" Height="40" Margin="0,0,0,15" SelectionChanged="ProgramCombo_SelectionChanged" />
 
-                            <TextBlock Text="Προσδιορίστε το Πρόγραμμα:">
-                                <TextBlock.Style>
-                                    <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding ElementName=ComboProgram, Path=SelectedItem}">
-                                                <Setter Property="Visibility" Value="Visible" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
+                            <TextBlock x:Name="TxtOtherProgramBlock" Text="Προσδιορίστε το Πρόγραμμα:" Visibility="Collapsed">
                             </TextBlock>
-
-                            <TextBox x:Name="TxtOtherProgram" CharacterCasing="Upper">
+                            <TextBox  x:Name="TxtOtherProgram" CharacterCasing="Upper" Visibility="Collapsed"/>
+                            <!--<TextBox x:Name="TxtOtherProgram" CharacterCasing="Upper">
                                 <TextBox.Style>
                                     <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
                                         <Setter Property="Visibility" Value="Collapsed" />
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding ElementName=ComboProgram, Path=SelectedItem}" >
+                                            --><!-- Εμφάνιση μόνο όταν η επιλογή είναι "ΑΛΛΟ" --><!--
+                                            <DataTrigger Binding="{Binding ElementName=ComboProgram, Path=SelectedItem}" Value="ΑΛΛΟ">
                                                 <Setter Property="Visibility" Value="Visible" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </TextBox.Style>
-                            </TextBox>
+                            </TextBox>-->
 
                             <TextBlock Text="7. Πελάτης" />
-                            <ComboBox x:Name="ComboClient" Height="40" Margin="0,0,0,15" SelectedIndex="0" SelectionChanged="ClientCombo_SelectionChanged">
-                                <ComboBoxItem Content="-- ΕΠΙΛΕΞΤΕ ΝΑΙ/ΟΧΙ --" />
-                                <ComboBoxItem Content="ΝΑΙ" />
-                                <ComboBoxItem Content="ΟΧΙ" />
-                            </ComboBox>
+                            <ComboBox x:Name="ComboClient" Height="40" Margin="0,0,0,15" SelectionChanged="ClientCombo_SelectionChanged" />
+
 
                             <TextBlock Text="8. PRESENTATION" />
                             <Grid Margin="5">
@@ -260,7 +239,7 @@
 
                             <TextBox x:Name="TxtNotes" Height="80" VerticalContentAlignment="Top" AcceptsReturn="True" TextWrapping="Wrap" />
 
-                            <StackPanel Grid.Row="1" Margin="30">
+                            <StackPanel x:Name="signPanel" Visibility="Visible" Grid.Row="1" Margin="30">
 
                               
 
@@ -279,8 +258,9 @@
                                 </Border>
 
 
-                                <Button Click="BtnFinish_Click" Content="Ολοκλήρωση &amp; Επιβεβαίωση" Style="{StaticResource BtnPrimary}" />
                             </StackPanel>
+                            <Button Click="BtnFinish_Click" Content="Ολοκλήρωση &amp; Επιβεβαίωση" Style="{StaticResource BtnPrimary}" />
+
                         </StackPanel>
                     </Border>
                     <TextBlock Margin="5,15,5,5" FontSize="11" FontStyle="Italic" Foreground="#64748B" Text="* Στην περίπτωση που επιθυμείτε να διαγραφούν τα προσωπικά σας στοιχεία από τη βάση δεδομένων της Europharmacy μπορείτε να ανακαλέσετε εγγράφως τη συγκατάθεσή σας ανά πάσα στιγμή." TextWrapping="Wrap" />
