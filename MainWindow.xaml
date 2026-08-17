@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EuroPromotionProject"
         mc:Ignorable="d"
-        WindowState="Maximized"
+        WindowState="Maximized" Closed="Window_Closing"
         Title="MainWindow" Height="auto" Width="auto">
         <Grid>
                 <Grid.RowDefinitions>

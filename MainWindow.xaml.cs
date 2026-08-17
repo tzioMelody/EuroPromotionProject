@@ -125,6 +125,10 @@ namespace EuroPromotionProject
 
         }
 
-      
+        private void Window_Closing(object sender, EventArgs e)
+        {
+
+            Environment.Exit(Environment.ExitCode);
+        }
     }
 }
