@@ -10,11 +10,10 @@ namespace EuroPromotionProject
 {
     class PDFGenerator
     {
-        public void CreatePdfWithSignature(string dest, string pharmacyName, string promoter, string city, string phone, string email, string originalprogram, string finalprogram, string client, string presentation, string sales, string notes, bool hasConsent, InkCanvas canvas)
+        public void CreatePdfWithSignature(string dest, string pharmacyName, string promoter, string city, string phone, string email, string originalprogram, string finalprogram, string client, string presentation, string sales, string notes, string importantNotes, bool hasConsent, InkCanvas canvas)
         {
             try
             {
-                // 1. Μετατροπή της υπογραφής σε Base64
                 string signatureBase64 = "";
                 if (canvas != null && canvas.Strokes.Count > 0)
                 {
@@ -25,7 +24,6 @@ namespace EuroPromotionProject
                     }
                 }
 
-                // 2. Μετατροπή του Λογότυπου σε Base64 (Η ΑΠΟΛΥΤΗ ΛΥΣΗ ΓΙΑ ΝΑ ΕΜΦΑΝΙΣΤΕΙ)
                 string logoBase64 = "";
                 string logoPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "Eurologo.png");
                 if (File.Exists(logoPath))
@@ -34,12 +32,10 @@ namespace EuroPromotionProject
                     logoBase64 = Convert.ToBase64String(logoBytes);
                 }
 
-                // Ελέγχουμε αν βρέθηκε το λογότυπο, αλλιώς βάζουμε απλό κείμενο για να μην "σπάσει" η εμφάνιση
                 string logoHtml = !string.IsNullOrEmpty(logoBase64)
                     ? $"<img src='data:image/png;base64,{logoBase64}' class='logo' />"
                     : "<div class='title'>EUROPHARMACY IKE</div>";
 
-                // 3. ΤΟ PREMIUM DESIGN ΣΕ HTML/CSS
                 string consentHtml = "";
                 if (hasConsent)
                 {
@@ -82,7 +78,26 @@ namespace EuroPromotionProject
                             font-size: 13px; 
                             border: 1px solid #CBD5E0; 
                         }}
+                        .info-table td.pharmacy-cell {{font - size: 18px;
+                            font-weight: bold;
+                            padding: 12px 10px;
+                        }}
 
+                        .info-table td.notes-cell {{font - size: 13px;
+                            line-height: 1.5;
+                            padding: 15px 10px;
+                            min-height: 60px;
+                            white-space: pre-wrap;
+                            word-wrap: break-word;
+                        }}
+
+                       .info-table td.importantnotes-cell {{font - size: 13px;
+                            line-height: 1.5;
+                            padding: 15px 10px;
+                            min-height: 60px;
+                            white-space: pre-wrap;
+                            word-wrap: break-word;
+                        }}
                         .consent-box {{ 
                             width: 100%; 
                             background-color: #F0F9FF; 
@@ -125,7 +140,7 @@ namespace EuroPromotionProject
                         </table>
 
                         <table class='info-table'>
-                            <tr><th>ΦΑΡΜΑΚΕΙΟ</th><td><strong>{pharmacyName}</strong></td></tr>
+                            <tr><th>ΦΑΡΜΑΚΕΙΟ</th><td class='pharmacy-cell'>{pharmacyName}</td></tr>
                             <tr><th>PROMOTER</th><td>{promoter}</td></tr>
                             <tr><th>ΠΟΛΗ</th><td>{city}</td></tr>
                             <tr><th>ΤΗΛΕΦΩΝΟ</th><td>{phone}</td></tr>
@@ -135,7 +150,8 @@ namespace EuroPromotionProject
                             <tr><th>ΠΡΟΓΡΑΜΜΑ</th><td>{finalprogram}</td></tr>
                             <tr><th>PRESENTATION</th><td>{presentation}</td></tr>
                             <tr><th>SALES</th><td>{sales}</td></tr>
-                            <tr><th>ΠΑΡΑΤΗΡΗΣΕΙΣ</th><td>{notes}</td></tr>
+                            <tr><th>ΠΑΡΑΤΗΡΗΣΕΙΣ</th><td class='notes-cell'>{notes}</td></tr>
+                            <tr><th>ΣΗΜΑΝΤΙΚΑ</th><td class='importantnotes-cell'>{importantNotes}</td></tr>
                         </table>
 
                         {consentHtml}
@@ -171,7 +187,6 @@ namespace EuroPromotionProject
                 </body>
                 </html>";
 
-                // 4. Δημιουργία PDF
                 using (FileStream pdfDest = new FileStream(dest, FileMode.Create))
                 {
                     ConverterProperties converterProperties = new ConverterProperties();

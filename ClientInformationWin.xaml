@@ -238,7 +238,10 @@
                             </WrapPanel>
 
                             <TextBox x:Name="TxtNotes" Height="80" VerticalContentAlignment="Top" AcceptsReturn="True" TextWrapping="Wrap" />
-
+                            
+                            <TextBlock Text="11. Σημαντικά" />
+                            <TextBox x:Name="TxtImportantNotes" Height="80" VerticalContentAlignment="Top" AcceptsReturn="True" TextWrapping="Wrap" />
+                            
                             <StackPanel x:Name="signPanel" Visibility="Visible" Grid.Row="1" Margin="30">
 
                               

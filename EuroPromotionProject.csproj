@@ -9,8 +9,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="assets\Eurologo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.105.1" />
     <PackageReference Include="itext7.pdfhtml" Version="6.3.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="assets\Eurologo.png" />
   </ItemGroup>
 
 </Project>

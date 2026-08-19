@@ -31,6 +31,7 @@ namespace EuroPromotionProject
         public string Phone => TxtPhone.Text;
         public string Email => TxtEmail.Text;
         public string Notes => TxtNotes.Text;
+        public string ImportantNotes => TxtImportantNotes.Text;
         public bool IsConsentChecked => ChkConsent.IsChecked == true;
 
         public List<StatementFile> allFiles = new List<StatementFile>();
@@ -48,6 +49,7 @@ namespace EuroPromotionProject
             public string finalProgram { get; set; }    
             public string Client { get; set; }
             public string Notes { get; set; }
+            public string ImportantNotes { get; set; }
             public bool IsConsentChecked { get; set; }
         }
         public class StatementFile
@@ -55,6 +57,7 @@ namespace EuroPromotionProject
             public string FileName { get; set; }
             public string FullPath { get; set; }
             public string DateCreated { get; set; }
+            public string ImportantNotes { get; set; }
         }
         public void InitWindow(Window mw)
         {
@@ -69,6 +72,9 @@ namespace EuroPromotionProject
             DataTable dt = ImportExceltoDatatable(filePath);
             var itemsListPP = dt.AsEnumerable().Select(row => row["Presentation / Promotion"]?.ToString()).Where(text => !string.IsNullOrEmpty(text)).ToList();
             var itemsListSales = dt.AsEnumerable().Select(row => row["Sales"]?.ToString()).Where(text => !string.IsNullOrEmpty(text)).ToList();
+
+            itemsListPP.Insert(0, "");
+            itemsListSales.Insert(0, "");
 
             ComboPromoter.ItemsSource = null;
             ComboPromoter.ItemsSource = itemsListPP;
@@ -231,7 +237,7 @@ namespace EuroPromotionProject
         {
             if (_fileToEdit == null) return;
 
-            signPanel.Visibility = Visibility.Collapsed; // Hide the signature grid when editing
+            signPanel.Visibility = Visibility.Collapsed;
 
             string jsonPath = System.IO.Path.ChangeExtension(_fileToEdit.FullPath, ".json");
 
@@ -249,6 +255,7 @@ namespace EuroPromotionProject
                         TxtPhone.Text = data.Phone;
                         TxtEmail.Text = data.Email;
                         TxtNotes.Text = data.Notes;
+                        TxtImportantNotes.Text = data.ImportantNotes;
                         ChkConsent.IsChecked = data.IsConsentChecked;
 
                         ComboPromoter.SelectedItem = data.Promoter;
@@ -411,17 +418,18 @@ namespace EuroPromotionProject
                 PDFGenerator generator = new PDFGenerator();
                 generator.CreatePdfWithSignature(
                     fullDestPath,
-                    Pharmacy,      // Αντί για infoWin.TxtPharmacy.Text
-                    ComboPromoter.Text,      // Χρησιμοποιεί το SelectionBoxItem αυτόματα
-                    City,          // Αντί για infoWin.TxtCity.Text
-                    Phone,         // Αντί για infoWin.TxtPhone.Text
+                    Pharmacy,     
+                    ComboPromoter.Text,    
+                    City,          
+                    Phone,        
                     Email,  
-                    originalProgram, // Αντί για infoWin.TxtEmail.Text
-                    finalProgram,       // Αντί για infoWin.TxtProgram.Text
-                    ComboClient.Text,        // Χρησιμοποιεί το SelectionBoxItem (ΝΑΙ/ΟΧΙ)
-                    ComboPresentation.Text,  // Χρησιμοποιεί το SelectionBoxItem (ΝΑΙ/ΟΧΙ)
-                    ComboSales.Text,         // Χρησιμοποιεί το SelectionBoxItem (ΝΑΙ/ΟΧΙ)
-                    Notes,         // Αντί για infoWin.TxtNotes.Text
+                    originalProgram, 
+                    finalProgram,  
+                    ComboClient.Text,       
+                    ComboPresentation.Text, 
+                    ComboSales.Text,         
+                    Notes,        
+                    ImportantNotes,
                     IsConsentChecked,
                     SignCanvas
                 );
@@ -439,6 +447,7 @@ namespace EuroPromotionProject
                     finalProgram = TxtOtherProgram.Text,
                     Client = ComboClient.Text,
                     Notes = Notes,
+                    ImportantNotes = ImportantNotes,
                     IsConsentChecked = IsConsentChecked
                 };
 
