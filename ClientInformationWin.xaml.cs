@@ -335,13 +335,12 @@ namespace EuroPromotionProject
 
         private void BtnFinish_Click(object sender, RoutedEventArgs e)
         {
-            bool isPromoterEmpty = ComboPromoter.SelectedIndex <= 0;
             bool isPharmacyEmpty = string.IsNullOrWhiteSpace(TxtPharmacy.Text);
             bool isPhoneEmpty = string.IsNullOrWhiteSpace(TxtPhone.Text);
 
-            if (isPromoterEmpty || isPharmacyEmpty || isPhoneEmpty)
+            if (isPharmacyEmpty || isPhoneEmpty)
             {
-                MessageBox.Show("Ο Promoter, το Φαρμακείο και το Τηλέφωνο είναι υποχρεωτικά πεδία!");
+                MessageBox.Show("Tο Φαρμακείο και το Τηλέφωνο είναι υποχρεωτικά πεδία!");
                 return;
             }
             if (SignCanvas.Strokes.Count == 0 && _fileToEdit == null)
