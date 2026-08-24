@@ -346,7 +346,6 @@ namespace EuroPromotionProject
             finally
             {
                 BtnManualSync.IsEnabled = true;
-                BtnManualSync.Content = "Χειροκίνητος Συγχρονισμός";
                 await CheckSyncStatusAsync();
             }
         }
