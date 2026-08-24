@@ -361,9 +361,9 @@ namespace EuroPromotionProject
                 MessageBox.Show("Tο Φαρμακείο και το Τηλέφωνο είναι υποχρεωτικά πεδία!");
                 return;
             }
-            if (SignCanvas.Strokes.Count == 0 && _fileToEdit == null)
+            if ((SignCanvas.Strokes.Count == 0 && _fileToEdit == null && IsConsentChecked) || (SignCanvas.Strokes.Count != 0 && !IsConsentChecked))
             {
-                MessageBox.Show("Παρακαλώ βάλτε την υπογραφή σας.");
+                MessageBox.Show("Για την επιτυχής καταχώρηση των στοιχείων του πελάτη πρέπει να έχει υπογράψει και συνεναίσει στην κατχώρηση των στοιχειών.");
                 return;
             }
 
