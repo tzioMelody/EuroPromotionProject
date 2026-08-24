@@ -35,7 +35,7 @@ namespace EuroPromotionProject
         public bool IsConsentChecked => ChkConsent.IsChecked == true;
 
         public List<StatementFile> allFiles = new List<StatementFile>();
-       
+
         public class StatementData
         {
             public string Pharmacy { get; set; }
@@ -46,7 +46,7 @@ namespace EuroPromotionProject
             public string Presenter { get; set; }
             public string SalesPerson { get; set; }
             public string Program { get; set; }
-            public string finalProgram { get; set; }    
+            public string finalProgram { get; set; }
             public string Client { get; set; }
             public string Notes { get; set; }
             public string ImportantNotes { get; set; }
@@ -113,7 +113,7 @@ namespace EuroPromotionProject
         public ClientInformationWin(StatementFile fileToEdit) : this()
         {
             _fileToEdit = fileToEdit;
-            LoadDataForEdit(); 
+            LoadDataForEdit();
         }
         private void PromoterCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -239,7 +239,7 @@ namespace EuroPromotionProject
 
             signPanel.Visibility = Visibility.Collapsed;
 
-            string jsonPath = System.IO.Path.ChangeExtension(_fileToEdit.FullPath, ".json");
+            string jsonPath = GetJsonPathForPdf(_fileToEdit.FullPath);
 
             if (File.Exists(jsonPath))
             {
@@ -278,7 +278,6 @@ namespace EuroPromotionProject
                             TxtOtherProgramBlock.Visibility = Visibility.Visible;
                             TxtOtherProgram.Text = data.finalProgram;
                         }
-                            
 
                     }
                 }
@@ -333,7 +332,7 @@ namespace EuroPromotionProject
         }
 
 
-        private void BtnFinish_Click(object sender, RoutedEventArgs e)
+        private async void BtnFinish_Click(object sender, RoutedEventArgs e)
         {
             bool isPharmacyEmpty = string.IsNullOrWhiteSpace(TxtPharmacy.Text);
             bool isPhoneEmpty = string.IsNullOrWhiteSpace(TxtPhone.Text);
@@ -349,7 +348,16 @@ namespace EuroPromotionProject
                 return;
             }
 
-            SaveStatement();
+            // Απενεργοποιούμε το κουμπί όσο γίνεται το ανέβασμα για να μην πατηθεί δύο φορές και δημιουργηθούν διπλά αρχεία.
+            BtnFinish.IsEnabled = false;
+            try
+            {
+                await SaveStatement();
+            }
+            finally
+            {
+                BtnFinish.IsEnabled = true;
+            }
         }
 
 
@@ -357,7 +365,6 @@ namespace EuroPromotionProject
         {
             try
             {
-
 
                 //Save the signature as an image
                 string statementPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "EuroStatementPdf");
@@ -367,7 +374,7 @@ namespace EuroPromotionProject
                 }
 
                 string originalProgram = ComboProgram.SelectedItem?.ToString();
-                
+
                 string finalProgram = (originalProgram == "ΑΛΛΟ") ? TxtOtherProgram.Text.Trim() : originalProgram;
 
                 if (string.IsNullOrEmpty(finalProgram) || finalProgram == "--ΕΠΙΛΕΞΤΕ ΠΡΟΓΡΑΜΜΑ--")
@@ -379,7 +386,7 @@ namespace EuroPromotionProject
 
                 string StatementFileName = "";
 
-                
+
                 if (_fileToEdit != null)
                 {
 
@@ -396,7 +403,7 @@ namespace EuroPromotionProject
                             File.Delete(_fileToEdit.FullPath);
                         }
 
-                        string oldJsonPath = System.IO.Path.ChangeExtension(_fileToEdit.FullPath, ".json");
+                        string oldJsonPath = GetJsonPathForPdf(_fileToEdit.FullPath);
                         if (File.Exists(oldJsonPath))
                         {
                             File.Delete(oldJsonPath);
@@ -409,25 +416,26 @@ namespace EuroPromotionProject
                 }
                 else
                 {
-                    // Νέα καταχώρηση
-                    StatementFileName = $"{cleanPharmacyName}_{DateTime.Now:yyyyMMdd_HHmm}.pdf";
+                    // Προσθέτουμε το όνομα της συσκευής στη ονομασία τόυ αρχείου ώστε να μην υπάρχει overwrite αν καταχωρηθούν ταυτόχρονα 2 ή παραπάνω φόρμες για το ίδιο φαρμακείο μέσα στο ίδιο λεπτό.
+                    string deviceId = Environment.MachineName;
+                    StatementFileName = $"{cleanPharmacyName}_{DateTime.Now:yyyyMMdd_HHmmss}_{deviceId}.pdf";
                 }
 
                 string fullDestPath = System.IO.Path.Combine(statementPath, StatementFileName);
                 PDFGenerator generator = new PDFGenerator();
                 generator.CreatePdfWithSignature(
                     fullDestPath,
-                    Pharmacy,     
-                    ComboPromoter.Text,    
-                    City,          
-                    Phone,        
-                    Email,  
-                    originalProgram, 
-                    finalProgram,  
-                    ComboClient.Text,       
-                    ComboPresentation.Text, 
-                    ComboSales.Text,         
-                    Notes,        
+                    Pharmacy,
+                    ComboPromoter.Text,
+                    City,
+                    Phone,
+                    Email,
+                    originalProgram,
+                    finalProgram,
+                    ComboClient.Text,
+                    ComboPresentation.Text,
+                    ComboSales.Text,
+                    Notes,
                     ImportantNotes,
                     IsConsentChecked,
                     SignCanvas
@@ -450,7 +458,7 @@ namespace EuroPromotionProject
                     IsConsentChecked = IsConsentChecked
                 };
 
-                string jsonPath = System.IO.Path.ChangeExtension(fullDestPath, ".json");
+                string jsonPath = GetJsonPathForPdf(fullDestPath);
                 string jsonString = JsonSerializer.Serialize(statementData, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(jsonPath, jsonString);
 
@@ -469,9 +477,15 @@ namespace EuroPromotionProject
 
                         string fileName = System.IO.Path.GetFileName(fullDestPath);
 
-                        // Αντιγραφή PDF & JSON στο OneDrive
-                        File.Copy(fullDestPath, System.IO.Path.Combine(targetFolder, fileName), overwrite: true);
-                        File.Copy(jsonPath, System.IO.Path.Combine(targetFolder, System.IO.Path.GetFileName(jsonPath)), overwrite: true);
+                        // Αντιγραφή PDF & JSON στο OneDriveμ με retry γιατί ο OneDrive client μπορεί να κλειδώνει προσωρινά το αρχείο ενώ κάνει sync.
+                        string targetJsonFolder = System.IO.Path.Combine(targetFolder, "JsonData");
+                        if (!Directory.Exists(targetJsonFolder))
+                        {
+                            Directory.CreateDirectory(targetJsonFolder);
+                        }
+
+                        await CopyWithRetryAsync(fullDestPath, System.IO.Path.Combine(targetFolder, fileName));
+                        await CopyWithRetryAsync(jsonPath, System.IO.Path.Combine(targetJsonFolder, System.IO.Path.GetFileName(jsonPath)));
 
                         MessageBox.Show("Η αναφορά σώθηκε επιτυχώς στον φάκελο OneDrive και συγχρονίζεται!",
                                         "OneDrive Sync", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -500,6 +514,34 @@ namespace EuroPromotionProject
 
             }
         }
+
+        // Αντιγράφει ένα αρχείο με επαναληπτικές προσπάθειες γιατί το OneDrive client μπορεί να κρατάει προσωρινό lock στο φάκελο προορισμού ενώ κάνει sync. Θα μας χρειαστεί και για το να δείχνουμε αν έχουν ανέβει όλα ή όχι. 
+        public static async Task CopyWithRetryAsync(string sourcePath, string destPath, int maxAttempts = 3)
+        {
+            for (int attempt = 1; attempt <= maxAttempts; attempt++)
+            {
+                try
+                {
+                    File.Copy(sourcePath, destPath, overwrite: true);
+                    return;
+                }
+                catch (IOException) when (attempt < maxAttempts)
+                {
+                    await Task.Delay(500 * attempt);
+                }
+            }
+        }
+        private static string GetJsonPathForPdf(string pdfFullPath)
+        {
+            string folder = System.IO.Path.GetDirectoryName(pdfFullPath);
+            string jsonFolder = System.IO.Path.Combine(folder, "JsonData");
+            if (!Directory.Exists(jsonFolder))
+                Directory.CreateDirectory(jsonFolder);
+
+            string fileNameNoExt = System.IO.Path.GetFileNameWithoutExtension(pdfFullPath);
+            return System.IO.Path.Combine(jsonFolder, fileNameNoExt + ".json");
+        }
+
         private void Window_Closed(object sender, EventArgs e)
         {
             if (mainWindow != null)
@@ -509,5 +551,4 @@ namespace EuroPromotionProject
             }
         }
     }
-    
 }

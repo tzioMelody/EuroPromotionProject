@@ -262,7 +262,7 @@
 
 
                             </StackPanel>
-                            <Button Click="BtnFinish_Click" Content="Ολοκλήρωση &amp; Επιβεβαίωση" Style="{StaticResource BtnPrimary}" />
+                            <Button x:Name="BtnFinish"  Click="BtnFinish_Click" Content="Ολοκλήρωση &amp; Επιβεβαίωση" Style="{StaticResource BtnPrimary}" />
 
                         </StackPanel>
                     </Border>
