@@ -168,7 +168,7 @@
                             </StackPanel.Resources>
 
                             <TextBlock Margin="0,0,0,20" HorizontalAlignment="Center" FontSize="18" FontWeight="Bold" Foreground="#1E293B" Text="Στοιχεία Επικοινωνίας" />
-                            <TextBlock Text="1. Promoter*" />
+                            <TextBlock Text="1. Promoter " />
                             <Grid Margin="5">
                                 
                                 <ComboBox x:Name="ComboPromoter" Height="40" Margin="0,0,0,15" SelectionChanged="PromoterCombo_SelectionChanged" Style="{StaticResource ComboBoxStyle}">
@@ -256,7 +256,7 @@
                                 
                                 <Border Margin="0,0,0,20" Padding="15" Background="White" CornerRadius="10">
                                     <CheckBox x:Name="ChkConsent" VerticalContentAlignment="Top">
-                                        <TextBlock FontSize="13" FontWeight="Bold" Foreground="#334155" LineHeight="18" Text="ΣΥΝΑΙΝΩ για την τήρηση των προσωπικών μου στοιχείων απο τη Europharmacy ΙΚΕ για μελλοντική επικοινωνία με σκοπό την ενημέρωσή μου." TextWrapping="Wrap" />
+                                        <TextBlock FontSize="13" FontWeight="Bold" Foreground="#334155" LineHeight="18" Text="ΣΥΝΑΙΝΩ για την τήρηση των προσωπικών μου στοιχείων από τη Europharmacy ΙΚΕ για μελλοντική επικοινωνία με σκοπό την ενημέρωσή μου." TextWrapping="Wrap" />
                                     </CheckBox>
                                 </Border>
 
