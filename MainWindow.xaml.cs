@@ -1,4 +1,7 @@
-﻿using System.Diagnostics;
+﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.VisualBasic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Text.Json;
@@ -239,15 +242,15 @@ namespace EuroPromotionProject
 
             if (allMissing.Count == 0)
             {
-                UpdateUIStatus(new SolidColorBrush((Color)ColorConverter.ConvertFromString("#10B981")), allMissing);
+                UpdateUIStatus(new SolidColorBrush((System.Windows.Media.Color)ColorConverter.ConvertFromString("#10B981")), allMissing);
             }
             else if (allMissing.Count == allLocal.Count)
             {
-                UpdateUIStatus(new SolidColorBrush((Color)ColorConverter.ConvertFromString("#EF4444")), allMissing);
+                UpdateUIStatus(new SolidColorBrush((System.Windows.Media.Color)ColorConverter.ConvertFromString("#EF4444")), allMissing);
             }
             else
             {
-                UpdateUIStatus(new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F59E0B")), allMissing);
+                UpdateUIStatus(new SolidColorBrush((System.Windows.Media.Color)ColorConverter.ConvertFromString("#F59E0B")), allMissing);
             }
         }
 
@@ -352,6 +355,180 @@ namespace EuroPromotionProject
         private void StatusPopup_Closed(object sender, EventArgs e)
         {
            syncPopUpIsClosed = true;
+        }
+
+        private void BtnExportExcel_Click(object sender, RoutedEventArgs e)
+        {
+            StatusPopup.IsOpen = false;
+
+            string userCode = Interaction.InputBox(
+                "Παρακαλώ εισάγετε τον κωδικό σας:",
+                "Εισαγωγή Κωδικού",
+                "");
+
+            if (string.IsNullOrWhiteSpace(userCode))
+                return;
+
+            if (userCode != "euro405534")
+            {
+                MessageBox.Show(
+                    "Λάθος κωδικός.",
+                    "Σφάλμα",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+
+                return;
+            }
+
+            try
+            {
+                ExportAllDataToExcel();
+
+                MessageBox.Show(
+                    "Η εξαγωγή ολοκληρώθηκε με επιτυχία!",
+                    "Επιτυχία",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Σφάλμα κατά την εξαγωγή στο Excel:\n" + ex.Message,
+                    "Σφάλμα",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+        private void ExportAllDataToExcel()
+        {
+            string folderPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"EuroStatementPdf");
+            string jsonFolderPath = System.IO.Path.Combine(folderPath,"JsonData");
+
+            if (!Directory.Exists(folderPath))
+            {
+                MessageBox.Show("Δεν βρέθηκε ο φάκελος με τα αρχεία.","Σφάλμα",MessageBoxButton.OK,MessageBoxImage.Warning);
+                return;
+            }
+
+            if (!Directory.Exists(jsonFolderPath))
+            {
+                MessageBox.Show("Δεν βρέθηκε ο φάκελος JsonData.","Σφάλμα",MessageBoxButton.OK,MessageBoxImage.Warning);
+                return;
+            }
+
+            string excelPath = System.IO.Path.Combine(folderPath,$"Export_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx");
+
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.Worksheets.Add("Φαρμακεία");
+                worksheet.Cell(1, 1).Value = "Επωνυμία Φαρμακείου";
+                worksheet.Cell(1, 2).Value = "Πόλη";
+                worksheet.Cell(1, 3).Value = "Τηλέφωνο";
+                worksheet.Cell(1, 4).Value = "Email";
+                worksheet.Cell(1, 5).Value = "Promoter";
+                worksheet.Cell(1, 6).Value = "Παρουσίαση";
+                worksheet.Cell(1, 7).Value = "Πωλήσεις";
+                worksheet.Cell(1, 8).Value = "Πρόγραμμα";
+                worksheet.Cell(1, 9).Value = "Πελάτης";
+                worksheet.Cell(1, 10).Value = "Παρατηρήσεις";
+                worksheet.Cell(1, 11).Value = "Σημαντικές Παρατηρήσεις";
+                worksheet.Cell(1, 12).Value = "GDPR";
+                worksheet.Cell(1, 13).Value = "Επεξεργασμένο";
+                worksheet.Cell(1, 14).Value = "Ημερομηνία";
+
+                var headerRange = worksheet.Range(1, 1, 1, 11);
+
+                headerRange.Style.Font.Bold = true;
+                headerRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                headerRange.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+
+
+                string[] pdfFiles = Directory.GetFiles(folderPath, "*.pdf");
+                int row = 2;
+
+                foreach (string pdfPath in pdfFiles)
+                {
+                    string pdfFileName = System.IO.Path.GetFileName(pdfPath);
+
+                    string fileNameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension(pdfFileName);
+
+                    string jsonPath = System.IO.Path.Combine(jsonFolderPath,fileNameWithoutExtension + ".json");
+
+                    if (!File.Exists(jsonPath))
+                        continue;
+
+                    try
+                    {
+                        string jsonString = File.ReadAllText(jsonPath);
+
+                        var data =
+                            JsonSerializer.Deserialize<ClientInformationWin.StatementData>(
+                                jsonString);
+
+                        if (data == null)
+                            continue;
+
+                        worksheet.Cell(row, 1).Value = data.Pharmacy ?? "";
+                        worksheet.Cell(row, 2).Value = data.City ?? "";
+                        worksheet.Cell(row, 3).Value = data.Phone ?? "";
+                        worksheet.Cell(row, 4).Value = data.Email ?? "";
+                        worksheet.Cell(row, 5).Value = data.Promoter ?? "";
+                        worksheet.Cell(row, 6).Value = data.Presenter ?? "";
+                        worksheet.Cell(row, 7).Value = data.SalesPerson ?? "";
+
+                        string program = data.finalProgram;
+
+                        if (string.IsNullOrWhiteSpace(program))
+                            program = data.Program;
+
+
+                        worksheet.Cell(row, 8).Value = program ?? "";
+
+                        worksheet.Cell(row, 9).Value = data.Client ?? "";
+                        worksheet.Cell(row, 10).Value = data.Notes ?? "";
+                        worksheet.Cell(row, 11).Value = data.ImportantNotes ?? "";
+                        worksheet.Cell(row, 12).Value = data.IsConsentChecked ? "ΝΑΙ" : "ΟΧΙ";
+
+                        bool isEdited = pdfFileName.IndexOf( "_Edited", StringComparison.OrdinalIgnoreCase) >= 0;
+
+                        worksheet.Cell(row, 13).Value = isEdited ? "ΝΑΙ" : "ΟΧΙ";
+
+                        DateTime creationDate = File.GetCreationTime(pdfPath);
+
+                        worksheet.Cell(row, 14).Value = creationDate;
+                        worksheet.Cell(row, 14).Style.DateFormat.Format = "dd/MM/yyyy HH:mm";
+                        row++;
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(
+                            $"Σφάλμα στο αρχείο {pdfFileName}: {ex.Message}");
+                    }
+                }
+
+                if (row > 2)
+                {
+                    var dataRange = worksheet.Range(1, 1, row - 1, 11);
+
+                    dataRange.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+
+                    dataRange.Style.Alignment.WrapText = true;
+                    worksheet.Columns().AdjustToContents();
+                    worksheet.Column(5).Width = 40;
+                    worksheet.Column(6).Width = 40;
+
+                    worksheet.SheetView.FreezeRows(1);
+
+                    worksheet.Range(1,1,row - 1,11).SetAutoFilter();
+                }
+
+                workbook.SaveAs(excelPath);
+            }
+
+            if (File.Exists(excelPath))
+            {
+                Process.Start(new ProcessStartInfo(excelPath){UseShellExecute = true});
+            }
         }
     }
 }

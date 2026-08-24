@@ -102,17 +102,26 @@
                                 </StackPanel>
                             </Border>
 
-                            <Popup x:Name="StatusPopup" IsOpen="False" StaysOpen="False"  PlacementTarget="{Binding ElementName=BtnToggleStatus}" Placement="Bottom" Closed="StatusPopup_Closed">
+                            <Popup x:Name="StatusPopup" IsOpen="False" StaysOpen="False" PlacementTarget="{Binding ElementName=BtnToggleStatus}" Placement="Bottom" Closed="StatusPopup_Closed">
                                 <Border Background="White" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="12" Padding="15" Width="320">
                                     <Border.Effect>
                                         <DropShadowEffect BlurRadius="10" Color="#000000" Opacity="0.15" ShadowDepth="3"/>
                                     </Border.Effect>
                                     <StackPanel>
-                                        <TextBlock Text="Μη συγχρονισμένα αρχεία:"  FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,8"/>
+                                        <TextBlock Text="Μη συγχρονισμένα αρχεία:" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,8"/>
 
                                         <ListBox x:Name="LstUnsyncedFiles" MaxHeight="140" BorderThickness="1" BorderBrush="#E2E8F0" Margin="0,0,0,12" Background="#F8FAFC"/>
 
+                                        <!-- Κουμπί Συγχρονισμού -->
                                         <Button x:Name="BtnManualSync" Content="Συγχρονισμός" Click="BtnManualSync_Click" Height="36" Background="#660099" Foreground="White" FontWeight="SemiBold" Cursor="Hand">
+                                            <Button.Resources>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="CornerRadius" Value="8"/>
+                                                </Style>
+                                            </Button.Resources>
+                                        </Button>
+
+                                        <Button x:Name="BtnExportExcel" Content="Εξαγωγή σε Excel" Click="BtnExportExcel_Click" Height="36" Margin="0,8,0,0" Background="#107C41" Foreground="White" FontWeight="SemiBold" Cursor="Hand">
                                             <Button.Resources>
                                                 <Style TargetType="Border">
                                                     <Setter Property="CornerRadius" Value="8"/>
