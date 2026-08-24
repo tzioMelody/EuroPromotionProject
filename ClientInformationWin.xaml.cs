@@ -88,7 +88,7 @@ namespace EuroPromotionProject
             List<string> programList = new List<string>
             {
                 "-- ΕΠΙΛΕΞΤΕ ΠΡΟΓΡΑΜΜΑ --",
-                "EUROMEDICATWO",
+                "EUROMEDICA TWO",
                 "D",
                 "F/P",
                 "Λ",
@@ -141,12 +141,26 @@ namespace EuroPromotionProject
         }
         private void ProgramCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(ComboProgram.SelectedItem.ToString() == "ΑΛΛΟ")
+            if (ComboProgram.SelectedItem == null) return;
+
+            string selectedProgram = ComboProgram.SelectedItem.ToString();
+
+            if (selectedProgram == "ΑΛΛΟ")
             {
                 TxtOtherProgramBlock.Visibility = Visibility.Visible;
                 TxtOtherProgram.Visibility = Visibility.Visible;
             }
 
+            // Auto-ΝΑΙ μόνο αν ο χρήστης δεν έχει ήδη επιλέξει κάτι μόνος του
+            if (selectedProgram == "EUROMEDICA TWO" && ComboClient.SelectedIndex == 0)
+            {
+                ComboClient.SelectedItem = "ΝΑΙ";
+            }
+            else
+            {
+                ComboClient.SelectedItem = "ΟΧΙ";
+
+            }
         }
 
         private void ClientCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
