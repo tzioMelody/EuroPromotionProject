@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EuroPromotionProject"
         mc:Ignorable="d"
-        WindowState="Maximized" Closed="Window_Closing"
+        WindowState="Maximized" Loaded="Window_Loaded" Closed="Window_Closing"
         Title="MainWindow" Height="auto" Width="auto">
     <Grid>
         <Grid.RowDefinitions>
@@ -40,11 +40,9 @@
         </StackPanel>
 
         <Grid Grid.Row="1" Margin="30">
-
             <Border Background="#AAFFFFFF" CornerRadius="20" Opacity="0.8" />
 
             <Border Padding="20" Background="White" CornerRadius="20">
-
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -54,6 +52,7 @@
                     <Grid Grid.Row="0" Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
@@ -71,9 +70,9 @@
                             </Grid>
                         </Border>
 
-                        <!-- Το + και το ματάκι το ένα κάτω από το άλλο -->
-                        <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Top">
+                        
 
+                        <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Top">
                             <Button Width="45" Height="45" Click="AsyncBtnAddNewStatement_Click" Cursor="Hand">
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
@@ -92,12 +91,41 @@
                             <Button Width="45" Height="45" Margin="0,10,0,0" Click="ToggleButton_Click" Cursor="Hand" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
                                 <Path Width="20" Data="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z" Fill="#64748B" Stretch="Uniform" />
                             </Button>
+                        </StackPanel>
 
+                        <StackPanel Grid.Column="1" Orientation="Vertical" Margin="0,0,15,0" VerticalAlignment="Top">
+                            <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="12" Padding="10,8">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Ellipse x:Name="StatusCircle" Width="14" Height="14" Fill="Gray" Margin="0,0,8,0"/>
+
+                                    <ToggleButton x:Name="BtnToggleStatus" Content="▼" Width="24" Height="24" Click="BtnToggleStatus_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" FontWeight="Bold" Foreground="#64748B"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Popup x:Name="StatusPopup" IsOpen="False" StaysOpen="False"  PlacementTarget="{Binding ElementName=BtnToggleStatus}" Placement="Bottom" Closed="StatusPopup_Closed">
+                                <Border Background="White" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="12" Padding="15" Width="320">
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="10" Color="#000000" Opacity="0.15" ShadowDepth="3"/>
+                                    </Border.Effect>
+                                    <StackPanel>
+                                        <TextBlock Text="Μη συγχρονισμένα αρχεία:"  FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,8"/>
+
+                                        <ListBox x:Name="LstUnsyncedFiles" MaxHeight="140" BorderThickness="1" BorderBrush="#E2E8F0" Margin="0,0,0,12" Background="#F8FAFC"/>
+
+                                        <Button x:Name="BtnManualSync" Content="Συγχρονισμός" Click="BtnManualSync_Click" Height="36" Background="#660099" Foreground="White" FontWeight="SemiBold" Cursor="Hand">
+                                            <Button.Resources>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="CornerRadius" Value="8"/>
+                                                </Style>
+                                            </Button.Resources>
+                                        </Button>
+                                    </StackPanel>
+                                </Border>
+                            </Popup>
                         </StackPanel>
                     </Grid>
 
-                    <Grid Grid.Row="1" Margin="15,5,50,30">
-
+                    <Grid Grid.Row="1" >
                         <DataGrid Name="DtgFiles" Grid.Row="1" AlternatingRowBackground="#F8FAFC" AutoGenerateColumns="False" Background="Transparent" BorderThickness="0" FontSize="15" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#E2E8F0" IsReadOnly="True"
                                   MouseDoubleClick="DtgFiles_MouseDoubleClick" RowHeaderWidth="0" RowHeight="60">
 
