@@ -151,8 +151,7 @@ namespace EuroPromotionProject
                 TxtOtherProgram.Visibility = Visibility.Visible;
             }
 
-            // Auto-ΝΑΙ μόνο αν ο χρήστης δεν έχει ήδη επιλέξει κάτι μόνος του
-            if (selectedProgram == "EUROMEDICA TWO" && ComboClient.SelectedIndex == 0)
+            if (selectedProgram == "EUROMEDICA TWO")
             {
                 ComboClient.SelectedItem = "ΝΑΙ";
             }
