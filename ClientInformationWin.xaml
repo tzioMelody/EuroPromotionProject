@@ -247,7 +247,7 @@
                               
 
                                 <TextBlock Margin="5,0,0,10" FontWeight="SemiBold" Foreground="#475569" Text="Παρακαλώ υπογράψτε στο παρακάτω πλαίσιο:" />
-                                <Border Height="250" Background="White" BorderBrush="#CBD5E1" BorderThickness="2" CornerRadius="12">
+                                <Border Height="250" Background="White" BorderBrush="#CBD5E1" BorderThickness="2" CornerRadius="12" ScrollViewer.PanningMode="None">
                                     <Grid>
                                         <InkCanvas x:Name="SignCanvas" Margin="5" Background="Transparent" />
                                         <Line Margin="10,0,10,30" VerticalAlignment="Bottom" HorizontalAlignment="Center" Stroke="#E2E8F0" StrokeThickness="1" X1="0" X2="700" Y1="230" Y2="230" />

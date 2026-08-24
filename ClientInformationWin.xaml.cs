@@ -25,6 +25,7 @@ namespace EuroPromotionProject
     public partial class ClientInformationWin : Window
     {
         Window mainWindow;
+
         private StatementFile _fileToEdit;
         public string Pharmacy => TxtPharmacy.Text;
         public string City => TxtCity.Text;
@@ -67,6 +68,11 @@ namespace EuroPromotionProject
         public ClientInformationWin()
         {
             InitializeComponent();
+
+            //Για να μην κουνιέται όλη η φόρμα όταν πάει κάποιος να υπογράψει 
+            Stylus.SetIsFlicksEnabled(SignCanvas, false);
+            Stylus.SetIsTapFeedbackEnabled(SignCanvas, false);
+            Stylus.SetIsPressAndHoldEnabled(SignCanvas, false);
 
             string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Ονόματα έκθεσης Οκτώβρη.xlsx");
             DataTable dt = ImportExceltoDatatable(filePath);
