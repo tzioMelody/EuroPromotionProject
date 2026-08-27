@@ -80,6 +80,8 @@ namespace EuroPromotionProject
             Stylus.SetIsPressAndHoldEnabled(SignCanvas, false);
 
             string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Ονόματα έκθεσης Οκτώβρη.xlsx");
+            MessageBox.Show("Ψάχνω το αρχείο εδώ: " + filePath + "\nΥπάρχει; " + File.Exists(filePath));
+
             DataTable dt = ImportExceltoDatatable(filePath);
             var itemsListPP = dt.AsEnumerable().Select(row => row["Presentation / Promotion"]?.ToString()).Where(text => !string.IsNullOrEmpty(text)).ToList();
             var itemsListSales = dt.AsEnumerable().Select(row => row["Sales"]?.ToString()).Where(text => !string.IsNullOrEmpty(text)).ToList();
