@@ -103,7 +103,7 @@ namespace EuroPromotionProject
                 "-- ΕΠΙΛΕΞΤΕ ΠΡΟΓΡΑΜΜΑ --",
                 "EUROMEDICA TWO",
                 "DSK",
-                "FRN",
+                "FRM",
                 "MGR",
                 "ODW",
                 "SMW",
@@ -370,7 +370,7 @@ namespace EuroPromotionProject
             }
             if ((SignCanvas.Strokes.Count == 0 && _fileToEdit == null && IsConsentChecked) || (SignCanvas.Strokes.Count != 0 && !IsConsentChecked))
             {
-                MessageBox.Show("Για την επιτυχής καταχώρηση των στοιχείων του πελάτη πρέπει να έχει υπογράψει και συνεναίσει στην κατχώρηση των στοιχειών.");
+                MessageBox.Show("Για την επιτυχή καταχώρηση των στοιχείων του πελάτη πρέπει να έχει υπογράψει και συνεναίσει στην καταχώρηση των στοιχεν.");
                 return;
             }
 

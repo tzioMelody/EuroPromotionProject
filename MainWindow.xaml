@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:EuroPromotionProject"
         mc:Ignorable="d"
         WindowState="Maximized" Loaded="Window_Loaded" Closed="Window_Closing"
-        Title="MainWindow" Height="auto" Width="auto">
+        Title="EuroPromotion" Height="auto" Width="auto">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
