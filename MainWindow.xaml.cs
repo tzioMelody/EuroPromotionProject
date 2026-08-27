@@ -369,7 +369,7 @@ namespace EuroPromotionProject
             if (string.IsNullOrWhiteSpace(userCode))
                 return;
 
-            if (userCode != "euro405534")
+            if (userCode != "euro403354")
             {
                 MessageBox.Show(
                     "Λάθος κωδικός.",

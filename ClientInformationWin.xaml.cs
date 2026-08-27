@@ -69,6 +69,11 @@ namespace EuroPromotionProject
         {
             InitializeComponent();
 
+            SignCanvas.PreviewMouseDown += SignCanvas_PreviewMouseDown;
+            SignCanvas.PreviewMouseUp += SignCanvas_PreviewMouseUp;
+            SignCanvas.PreviewTouchDown += SignCanvas_PreviewTouchDown;
+            SignCanvas.PreviewTouchUp += SignCanvas_PreviewTouchUp;
+
             //Για να μην κουνιέται όλη η φόρμα όταν πάει κάποιος να υπογράψει 
             Stylus.SetIsFlicksEnabled(SignCanvas, false);
             Stylus.SetIsTapFeedbackEnabled(SignCanvas, false);
@@ -559,6 +564,27 @@ namespace EuroPromotionProject
 
             string fileNameNoExt = System.IO.Path.GetFileNameWithoutExtension(pdfFullPath);
             return System.IO.Path.Combine(jsonFolder, fileNameNoExt + ".json");
+        }
+
+        private void SignCanvas_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            SignCanvas.CaptureMouse();
+        }
+
+        private void SignCanvas_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            SignCanvas.ReleaseMouseCapture();
+        }
+
+        private void SignCanvas_PreviewTouchDown(object sender, TouchEventArgs e)
+        {
+            SignCanvas.CaptureTouch(e.TouchDevice);
+            e.Handled = true; // Εμποδίζει το ScrollViewer να ξεκινήσει panning
+        }
+
+        private void SignCanvas_PreviewTouchUp(object sender, TouchEventArgs e)
+        {
+            SignCanvas.ReleaseTouchCapture(e.TouchDevice);
         }
 
         private void Window_Closed(object sender, EventArgs e)
