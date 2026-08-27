@@ -100,11 +100,11 @@ namespace EuroPromotionProject
             {
                 "-- ΕΠΙΛΕΞΤΕ ΠΡΟΓΡΑΜΜΑ --",
                 "EUROMEDICA TWO",
-                "D",
-                "F/P",
-                "Λ",
-                "O",
-                "S",
+                "DSK",
+                "FRN",
+                "MGR",
+                "ODW",
+                "SMW",
                 "ΑΛΛΟ"
             };
 
