@@ -70,7 +70,7 @@
                             </Grid>
                         </Border>
 
-                        
+
 
                         <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Top">
                             <Button Width="45" Height="45" Click="AsyncBtnAddNewStatement_Click" Cursor="Hand">
@@ -164,18 +164,18 @@
 
                                 <DataGridTextColumn Width="250" Binding="{Binding DateCreated}" Header="Ημερομηνία" />
 
-                                <DataGridTemplateColumn Width="150" Header="Προβολή">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <Button Height="35" Margin="5" Click="OpenPdf_Click" Content="Άνοιγμα pdf" Cursor="Hand" />
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-
                                 <DataGridTemplateColumn Width="180" Header="Επεξεργασία">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Button Height="35" Margin="5" Click="EditPdf_Click" Content="Επεξεργασία στοιχείων" Cursor="Hand" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Width="150" Header="Προβολή">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Height="35" Margin="5" Click="OpenPdf_Click" Content="Άνοιγμα pdf" Cursor="Hand" />
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
