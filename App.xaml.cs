@@ -1,6 +1,9 @@
 ﻿using System.Configuration;
 using System.Data;
+using System.Globalization;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace EuroPromotionProject
 {
@@ -9,6 +12,9 @@ namespace EuroPromotionProject
     /// </summary>
     public partial class App : Application
     {
+        private static readonly CultureInfo Greek = new CultureInfo("el-GR");
+        private static readonly CultureInfo English = new CultureInfo("en-US");
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -32,8 +38,18 @@ namespace EuroPromotionProject
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
             };
+
+            EventManager.RegisterClassHandler(typeof(TextBox), UIElement.GotKeyboardFocusEvent,
+                new KeyboardFocusChangedEventHandler(OnTextBoxGotFocus));
+        }
+
+        private static void OnTextBoxGotFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            if (sender is TextBox tb)
+            {
+                InputLanguageManager.Current.CurrentInputLanguage =
+                    tb.Name == "TxtEmail" ? English : Greek;
+            }
         }
     }
 }
-
-

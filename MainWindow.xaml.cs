@@ -360,6 +360,7 @@ namespace EuroPromotionProject
         private void BtnExportExcel_Click(object sender, RoutedEventArgs e)
         {
             StatusPopup.IsOpen = false;
+            InputLanguageManager.Current.CurrentInputLanguage = new System.Globalization.CultureInfo("en-US");
 
             string userCode = Interaction.InputBox(
                 "Παρακαλώ εισάγετε τον κωδικό σας:",
